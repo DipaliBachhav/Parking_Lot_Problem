@@ -2,12 +2,15 @@ package com.ParkingLot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ParkingLot {
     private int parkingCapacity;
     private List<ParkingSlot> vehiclesList;
     private ParkingSlot parkingSlot;
+    private int emptyParkingSlot;
+
 
     public ParkingLot(int parkingCapacity) {
         setCapacity(parkingCapacity);
@@ -33,13 +36,20 @@ public class ParkingLot {
         return emptyParkingSlotList;
     }
 
-    public void parkVehicle(Object vehicle) {
+    public void parkVehicle(Object vehicle, DriverType driverType) {
         if (isVehicleParked(vehicle)) {
             throw new ParkingLotSystemException("Vehicle Already Parked", ParkingLotSystemException.ExceptionType.VEHICLE_ALREADY_PARKED);
         }
         parkingSlot = new ParkingSlot(vehicle);
-        int emptyParkingSlot = getListOfEmptyParkingSlots().get(0);
+        emptyParkingSlot = getEmptyParkingSlotListBasedOnDriverType(driverType);
         this.vehiclesList.set(emptyParkingSlot, parkingSlot);
+    }
+
+    private Integer getEmptyParkingSlotListBasedOnDriverType(DriverType driverType) {
+        List<Integer> emptySlots = getListOfEmptyParkingSlots().stream()
+                .sorted(driverType.order)
+                .collect(Collectors.toList());
+        return emptySlots.get(0);
     }
 
     public boolean isVehicleParked(Object vehicle) {
