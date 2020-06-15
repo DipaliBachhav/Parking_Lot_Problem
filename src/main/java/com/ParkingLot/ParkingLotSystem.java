@@ -32,10 +32,10 @@ public class ParkingLotSystem {
         if (this.parkingCapacity == this.vehiclesList.size() && !vehiclesList.contains(null)) {
             throw new ParkingLotSystemException("Parking Is Full", ParkingLotSystemException.ExceptionType.PARKING_FULL);
         }
-        if (this.vehiclesList.contains(vehicle)) {
+        if (vehiclesList.contains(vehicle)) {
             throw new ParkingLotSystemException("Vehicle Already Parked", ParkingLotSystemException.ExceptionType.VEHICLE_ALREADY_PARKED);
         }
-        this.vehiclesList.set(slot, vehicle);
+        vehiclesList.set(slot, vehicle);
         if (this.parkingCapacity == this.vehiclesList.size() && !vehiclesList.contains(null)) {
             informObserver.parkingFull();
         }
@@ -46,14 +46,14 @@ public class ParkingLotSystem {
     }
 
     public boolean isVehicleParked(Object vehicle) {
-        if (this.vehiclesList.contains(vehicle))
+        if (vehiclesList.contains(vehicle))
             return true;
         throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
     }
 
     public boolean unparkVehicle(Object vehicle) {
         if (this.vehiclesList.contains(vehicle)) {
-            this.vehiclesList.remove(vehicle);
+            vehiclesList.remove(vehicle);
             informObserver.parkingAvailable();
             return true;
         }
@@ -72,4 +72,10 @@ public class ParkingLotSystem {
         informObserver.unsubscribeParkingLotObserver(subscriber);
     }
 
+    public int findVehicle(Object vehicle) {
+        if(vehiclesList.contains(vehicle)) {
+            return vehiclesList.indexOf(vehicle);
+        }
+        throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
+    }
 }
