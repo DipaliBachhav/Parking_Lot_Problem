@@ -7,22 +7,25 @@ public class ParkingLotSystem {
     private Object vehicle;
     private ParkingOwner parkingOwner;
     private int currentCapacity = 0;
-    private ArrayList<ParkingLotSystemObserver> parkingLotSystemObservers;
+    InformObserver informObserver;
 
 
     public ParkingLotSystem(int parkingCapacity) {
         this.parkingCapacity = parkingCapacity;
-        this.parkingLotSystemObservers = new ArrayList<ParkingLotSystemObserver>();
+        this.informObserver = new InformObserver();
     }
 
     public void parkVehicle(Object vehicle) {
         if (this.parkingCapacity == currentCapacity) {
-            for(ParkingLotSystemObserver parkingLotSystemObserver : parkingLotSystemObservers)
-                parkingLotSystemObserver.parkingFull();
+            informObserver.parkingFull();
             throw new ParkingLotSystemException("Parking Is Full", ParkingLotSystemException.ExceptionType.PARKING_FULL);
         }
         this.vehicle = vehicle;
         currentCapacity++;
+    }
+
+    public void subscribe(ParkingLotSubscriber subscriber) {
+        informObserver.subscribeParkingLotObserver(subscriber);
     }
 
     public boolean isVehicleParked(Object vehicle) {
@@ -37,8 +40,8 @@ public class ParkingLotSystem {
         throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
     }
 
-    public void registerParkingLotSystemObserver(ParkingLotSystemObserver observer) {
-        this.parkingLotSystemObservers.add(observer);
+    public void unsubscribe(ParkingLotSubscriber subscriber) {
+        informObserver.unsubscribeParkingLotObserver(subscriber);
     }
 
 }

@@ -1,13 +1,14 @@
 package com.ParkingLot;
 
-public class AirportSecurity implements ParkingLotSystemObserver {
+public class AirportSecurity implements ParkingLotSubscriber  {
 
     private boolean parkingCapacity;
 
     @Override
-    public void parkingFull() {
-        this.parkingCapacity = true;
+    public void parkingFull(boolean parkingCapacity) {
+        this.parkingCapacity = parkingCapacity;
     }
+
 
     @Override
     public boolean isParkingFull() {

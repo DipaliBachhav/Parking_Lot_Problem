@@ -1,13 +1,16 @@
 package com.ParkingLot;
 
-public class ParkingOwner implements ParkingLotSystemObserver {
+public class ParkingOwner implements ParkingLotSubscriber  {
     private boolean parkingCapacity;
 
-    public void parkingFull() {
-        this.parkingCapacity = true;
-    }
-
+    @Override
     public boolean isParkingFull() {
         return this.parkingCapacity;
     }
+
+    @Override
+    public void parkingFull(boolean parkingCapacity) {
+        this.parkingCapacity = parkingCapacity;
+    }
+
 }
