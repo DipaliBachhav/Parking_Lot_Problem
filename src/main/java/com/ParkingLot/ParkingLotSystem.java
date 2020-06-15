@@ -7,4 +7,10 @@ public class ParkingLotSystem {
         this.vehicle = vehicle;
         return true;
     }
+    public boolean isVehicleParked(Object vehicle) {
+        if(this.vehicle == vehicle)
+            return true;
+        throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
+
+    }
 }
