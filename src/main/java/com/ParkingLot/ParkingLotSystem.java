@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class ParkingLotSystem {
-    private  int parkingCapacity;
-    private List vehiclesList;
-    private ParkingOwner parkingOwner;
-    InformObserver informObserver;
+    private int parkingCapacity;
+    private List<ParkingSlot> vehiclesList;
+    private InformObserver informObserver;
+    private ParkingSlot parkingSlot;
 
 
     public ParkingLotSystem(int parkingCapacity) {
@@ -32,10 +32,12 @@ public class ParkingLotSystem {
         if (this.parkingCapacity == this.vehiclesList.size() && !vehiclesList.contains(null)) {
             throw new ParkingLotSystemException("Parking Is Full", ParkingLotSystemException.ExceptionType.PARKING_FULL);
         }
-        if (vehiclesList.contains(vehicle)) {
+        if (isVehicleParked(vehicle)) {
             throw new ParkingLotSystemException("Vehicle Already Parked", ParkingLotSystemException.ExceptionType.VEHICLE_ALREADY_PARKED);
         }
-        vehiclesList.set(slot, vehicle);
+        parkingSlot = new ParkingSlot(vehicle);
+        parkingSlot.setSlot(slot);
+        vehiclesList.set(slot, parkingSlot);
         if (this.parkingCapacity == this.vehiclesList.size() && !vehiclesList.contains(null)) {
             informObserver.parkingFull();
         }
@@ -46,18 +48,19 @@ public class ParkingLotSystem {
     }
 
     public boolean isVehicleParked(Object vehicle) {
-        if (vehiclesList.contains(vehicle))
+        parkingSlot = new ParkingSlot(vehicle);
+        if (vehiclesList.contains(parkingSlot))
             return true;
-        throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
+        return false;
     }
 
     public boolean unparkVehicle(Object vehicle) {
-        if (this.vehiclesList.contains(vehicle)) {
+        if (isVehicleParked(vehicle)) {
             vehiclesList.remove(vehicle);
             informObserver.parkingAvailable();
             return true;
         }
-            throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
+        throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
     }
 
     public List<Integer> getListOfEmptyParkingSlots() {
@@ -73,9 +76,17 @@ public class ParkingLotSystem {
     }
 
     public int findVehicle(Object vehicle) {
-        if(vehiclesList.contains(vehicle)) {
-            return vehiclesList.indexOf(vehicle);
+            if(isVehicleParked(vehicle)) {
+                return vehiclesList.indexOf(parkingSlot);
+            }
+            throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
         }
-        throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
+
+        public void getVehicleParkingTime (Object vehicle){
+            if (isVehicleParked(vehicle)) {
+                informObserver.setParkingTime(parkingSlot.time);
+                return;
+            }
+            throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
+        }
     }
-}

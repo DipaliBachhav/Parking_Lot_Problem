@@ -2,10 +2,12 @@ package com.ParkingLot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class InformObserver {
-    public List<ParkingLotSubscriber> observersList;
+    private List<ParkingLotSubscriber> observersList;
     private boolean parkingCapacity;
+    private int time;
 
     public InformObserver() {
         this.observersList = new ArrayList<>();
@@ -34,5 +36,10 @@ public class InformObserver {
             parkingLotSubscriber.parkingFull(this.parkingCapacity);
     }
 
+    public void setParkingTime(int parkingTime) {
+        this.time = (int) TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis()) - parkingTime;
+        for (ParkingLotSubscriber parkingLotSubscriber : observersList)
+            parkingLotSubscriber.parkingTime(time);
+    }
 }
 
