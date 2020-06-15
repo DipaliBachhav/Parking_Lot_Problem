@@ -28,7 +28,7 @@ public class ParkingLotSystem {
         return false;
     }
 
-    public void parkVehicle(Object vehicle, DriverType driverType, VehicleSize vehicleSize) {
+    public void parkVehicle(Vehicle vehicle, DriverType driverType, VehicleSize vehicleSize) {
         parkingLot = getParkingLotHavingMaxSpace();
         if (parkingLot.isParkingFull()) {
             throw new ParkingLotSystemException("Parking Is Full", ParkingLotSystemException.ExceptionType.PARKING_FULL);
@@ -43,11 +43,11 @@ public class ParkingLotSystem {
         informObserver.subscribeParkingLotObserver(subscriber);
     }
 
-    public void unsubscribe (ParkingLotSubscriber subscriber){
+    public void unsubscribe(ParkingLotSubscriber subscriber) {
         informObserver.unsubscribeParkingLotObserver(subscriber);
     }
 
-    public boolean isVehicleParked(Object vehicle) {
+    public boolean isVehicleParked(Vehicle vehicle) {
         for (ParkingLot parkingLot : this.parkingLotList) {
             if (parkingLot.isVehicleParked(vehicle))
                 return true;
@@ -55,7 +55,7 @@ public class ParkingLotSystem {
         throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
     }
 
-    public boolean unparkVehicle(Object vehicle) {
+    public boolean unparkVehicle(Vehicle vehicle) {
         for (ParkingLot parkingLot : this.parkingLotList) {
             if (parkingLot.isVehicleParked(vehicle)) {
                 parkingLot.unparkVehicle(vehicle);
@@ -66,25 +66,32 @@ public class ParkingLotSystem {
         throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
     }
 
-        private ParkingLot getParkingLotHavingMaxSpace () {
-            return parkingLotList.stream()
-                    .sorted(Comparator.comparing(list -> list.getListOfEmptyParkingSlots().size(), Comparator.reverseOrder()))
-                    .collect(Collectors.toList()).get(0);
-        }
-
-        public int findVehicle (Object vehicle){
-            for (ParkingLot parkingLot : parkingLotList)
-                if (parkingLot.isVehicleParked(vehicle))
-                    return parkingLot.findVehicle(vehicle);
-            throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
-        }
-
-        public void getVehicleParkingTime (Object vehicle){
-            for (ParkingLot parkingLot : this.parkingLotList)
-                if (parkingLot.isVehicleParked(vehicle)) {
-                    informObserver.setParkingTime(parkingLot.getVehicleParkingTime(vehicle));
-                    return;
-                }
-            throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
-        }
+    private ParkingLot getParkingLotHavingMaxSpace() {
+        return parkingLotList.stream()
+                .sorted(Comparator.comparing(list -> list.getListOfEmptyParkingSlots().size(), Comparator.reverseOrder()))
+                .collect(Collectors.toList()).get(0);
     }
+
+    public int findVehicle(Vehicle vehicle) {
+        for (ParkingLot parkingLot : parkingLotList)
+            if (parkingLot.isVehicleParked(vehicle))
+                return parkingLot.findVehicle(vehicle);
+        throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
+    }
+
+    public void getVehicleParkingTime(Vehicle vehicle) {
+        for (ParkingLot parkingLot : this.parkingLotList)
+            if (parkingLot.isVehicleParked(vehicle)) {
+                informObserver.setParkingTime(parkingLot.getVehicleParkingTime(vehicle));
+                return;
+            }
+        throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
+    }
+
+    public List<List<Integer>> findVehicleByColor(String color) {
+        List<List<Integer>> vehicleListByColor = this.parkingLotList.stream()
+                .map(parkingSlot -> parkingLot.findByColor(color))
+                .collect(Collectors.toList());
+        return vehicleListByColor;
+    }
+}

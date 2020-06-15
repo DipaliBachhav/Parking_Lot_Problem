@@ -8,10 +8,20 @@ public class ParkingSlot {
     public Object vehicle;
     private Integer slot;
 
-    public ParkingSlot(Object vehicle) {
+    public ParkingSlot(Vehicle vehicle, int slot) {
         this.vehicle = vehicle;
         this.time = (int) TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis());
+        this.slot = slot;
     }
+
+    public int getLocation() {
+        return this.slot;
+    }
+
+    public Object getVehicle() {
+        return this.vehicle;
+    }
+
 
     public void setSlot(Integer slot) {
         this.slot = slot;

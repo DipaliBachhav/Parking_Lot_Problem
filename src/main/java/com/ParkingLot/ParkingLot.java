@@ -36,12 +36,12 @@ public class ParkingLot {
         return emptyParkingSlotList;
     }
 
-    public void parkVehicle(Object vehicle, DriverType driverType, VehicleSize vehicleSize) {
+    public void parkVehicle(Vehicle vehicle, DriverType driverType, VehicleSize vehicleSize) {
         if (isVehicleParked(vehicle)) {
             throw new ParkingLotSystemException("Vehicle Already Parked", ParkingLotSystemException.ExceptionType.VEHICLE_ALREADY_PARKED);
         }
-        parkingSlot = new ParkingSlot(vehicle);
         emptyParkingSlot = getEmptyParkingSlotListBasedOnDriverType(driverType);
+        parkingSlot = new ParkingSlot(vehicle, emptyParkingSlot);
         this.vehiclesList.set(emptyParkingSlot, parkingSlot);
     }
 
@@ -52,8 +52,8 @@ public class ParkingLot {
         return emptySlots.get(0);
     }
 
-    public boolean isVehicleParked(Object vehicle) {
-        parkingSlot = new ParkingSlot(vehicle);
+    public boolean isVehicleParked(Vehicle vehicle) {
+        parkingSlot = new ParkingSlot(vehicle, emptyParkingSlot);
         if (vehiclesList.contains(parkingSlot))
             return true;
         return false;
@@ -79,4 +79,13 @@ public class ParkingLot {
         }
         return false;
     }
-}
+    public List<Integer> findByColor(String color) {
+        List<Integer> vehicleListByColor = this.vehiclesList.stream()
+                .filter(parkingSlot -> parkingSlot.getVehicle() != null)
+                .filter(parkingSlot -> parkingSlot.getVehicle().getColor().equals(color))
+                .map(parkingSlot -> parkingSlot.getLocation())
+                .collect(Collectors.toList());
+        return vehicleListByColor;
+    }
+
+    }

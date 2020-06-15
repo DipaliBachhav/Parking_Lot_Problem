@@ -15,7 +15,7 @@ public class ParkingLotSystemTest {
     @Before
     public void setUp() {
         parkingLotSystem = new ParkingLotSystem();
-        vehicle = new Object();
+        vehicle = new Vehicle("WHITE");
         parkingLot = new ParkingLot(1);
         parkingLotSystem.addLot(parkingLot);
     }
@@ -395,4 +395,6 @@ public class ParkingLotSystemTest {
             Assert.assertEquals(0, vehicleParkedLocation);
             Assert.assertEquals(0, vehicleParkedLocation1);
         }
+
+
     }
