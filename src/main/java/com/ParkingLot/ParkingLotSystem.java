@@ -1,44 +1,40 @@
 package com.ParkingLot;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ParkingLotSystem {
-    private int parkingCapacity;
-    private List<ParkingSlot> vehiclesList;
+    private List<ParkingLot> parkingLotList;
     private InformObserver informObserver;
-    private ParkingSlot parkingSlot;
+    private ParkingLot parkingLot;
 
 
-    public ParkingLotSystem(int parkingCapacity) {
-        setCapacity(parkingCapacity);
+    public ParkingLotSystem() {
         this.informObserver = new InformObserver();
+        this.parkingLotList = new ArrayList<>();
     }
 
-    public int setCapacity(int parkingCapacity) {
-        this.parkingCapacity = parkingCapacity;
-        initializeParkingLot();
-        return vehiclesList.size();
+    public void addLot(ParkingLot parkingLot) {
+        this.parkingLotList.add(parkingLot);
     }
 
-    public void initializeParkingLot() {
-        this.vehiclesList = new ArrayList();
-        IntStream.range(0, this.parkingCapacity)
-                .forEach(slots -> vehiclesList.add(null));
+    public boolean isLotAdded(ParkingLot parkingLot) {
+        if (this.parkingLotList.contains(parkingLot)) {
+            return true;
+        }
+        return false;
     }
 
-    public void parkVehicle(Object vehicle, Integer slot) {
-        if (this.parkingCapacity == this.vehiclesList.size() && !vehiclesList.contains(null)) {
+    public void parkVehicle(Object vehicle) {
+        parkingLot = getParkingLotHavingMaxSpace();
+        if (parkingLot.isParkingFull()) {
             throw new ParkingLotSystemException("Parking Is Full", ParkingLotSystemException.ExceptionType.PARKING_FULL);
         }
-        if (isVehicleParked(vehicle)) {
-            throw new ParkingLotSystemException("Vehicle Already Parked", ParkingLotSystemException.ExceptionType.VEHICLE_ALREADY_PARKED);
-        }
-        parkingSlot = new ParkingSlot(vehicle);
-        parkingSlot.setSlot(slot);
-        vehiclesList.set(slot, parkingSlot);
-        if (this.parkingCapacity == this.vehiclesList.size() && !vehiclesList.contains(null)) {
+        parkingLot.parkVehicle(vehicle);
+        if (parkingLot.isParkingFull()) {
             informObserver.parkingFull();
         }
     }
@@ -47,46 +43,48 @@ public class ParkingLotSystem {
         informObserver.subscribeParkingLotObserver(subscriber);
     }
 
-    public boolean isVehicleParked(Object vehicle) {
-        parkingSlot = new ParkingSlot(vehicle);
-        if (vehiclesList.contains(parkingSlot))
-            return true;
-        return false;
+    public void unsubscribe (ParkingLotSubscriber subscriber){
+        informObserver.unsubscribeParkingLotObserver(subscriber);
     }
 
-    public boolean unparkVehicle(Object vehicle) {
-        if (isVehicleParked(vehicle)) {
-            vehiclesList.remove(vehicle);
-            informObserver.parkingAvailable();
-            return true;
+    public boolean isVehicleParked(Object vehicle) {
+        for (ParkingLot parkingLot : this.parkingLotList) {
+            if (parkingLot.isVehicleParked(vehicle))
+                return true;
         }
         throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
     }
 
-    public List<Integer> getListOfEmptyParkingSlots() {
-        List<Integer> emptyParkingSlotList = new ArrayList<>();
-        IntStream.range(0, this.parkingCapacity)
-                .filter(slot -> vehiclesList.get(slot) == null)
-                .forEach(emptyParkingSlotList::add);
-        return emptyParkingSlotList;
-    }
-
-    public void unsubscribe(ParkingLotSubscriber subscriber) {
-        informObserver.unsubscribeParkingLotObserver(subscriber);
-    }
-
-    public int findVehicle(Object vehicle) {
-            if(isVehicleParked(vehicle)) {
-                return vehiclesList.indexOf(parkingSlot);
+    public boolean unparkVehicle(Object vehicle) {
+        for (ParkingLot parkingLot : this.parkingLotList) {
+            if (parkingLot.isVehicleParked(vehicle)) {
+                parkingLot.unparkVehicle(vehicle);
+                informObserver.parkingAvailable();
+                return true;
             }
+        }
+        throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
+    }
+
+        private ParkingLot getParkingLotHavingMaxSpace () {
+            return parkingLotList.stream()
+                    .sorted(Comparator.comparing(list -> list.getListOfEmptyParkingSlots().size(), Comparator.reverseOrder()))
+                    .collect(Collectors.toList()).get(0);
+        }
+
+        public int findVehicle (Object vehicle){
+            for (ParkingLot parkingLot : parkingLotList)
+                if (parkingLot.isVehicleParked(vehicle))
+                    return parkingLot.findVehicle(vehicle);
             throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
         }
 
         public void getVehicleParkingTime (Object vehicle){
-            if (isVehicleParked(vehicle)) {
-                informObserver.setParkingTime(parkingSlot.time);
-                return;
-            }
+            for (ParkingLot parkingLot : this.parkingLotList)
+                if (parkingLot.isVehicleParked(vehicle)) {
+                    informObserver.setParkingTime(parkingLot.getVehicleParkingTime(vehicle));
+                    return;
+                }
             throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
         }
     }
