@@ -1,10 +1,11 @@
 package com.ParkingLot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ParkingLotSystem {
     private  int parkingCapacity;
-    private Object vehicle;
+    private List vehicle;
     private ParkingOwner parkingOwner;
     private int currentCapacity = 0;
     InformObserver informObserver;
@@ -12,6 +13,7 @@ public class ParkingLotSystem {
 
     public ParkingLotSystem(int parkingCapacity) {
         this.parkingCapacity = parkingCapacity;
+        this.vehicle = new ArrayList();
         this.informObserver = new InformObserver();
     }
 
@@ -20,7 +22,7 @@ public class ParkingLotSystem {
             informObserver.parkingFull();
             throw new ParkingLotSystemException("Parking Is Full", ParkingLotSystemException.ExceptionType.PARKING_FULL);
         }
-        this.vehicle = vehicle;
+        this.vehicle.add(vehicle);
         currentCapacity++;
     }
 
@@ -29,15 +31,18 @@ public class ParkingLotSystem {
     }
 
     public boolean isVehicleParked(Object vehicle) {
-        if (this.vehicle.equals(vehicle))
+        if (this.vehicle.contains(vehicle))
             return true;
         throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
     }
 
     public boolean unparkVehicle(Object vehicle) {
-        if (this.vehicle.equals(vehicle))
+        if (this.vehicle.contains(vehicle)) {
+            this.vehicle.remove(vehicle);
+            informObserver.parkingAvailable();
             return true;
-        throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
+        }
+            throw new ParkingLotSystemException("Vehicle Is Not Available", ParkingLotSystemException.ExceptionType.VEHICLE_NOT_FOUND);
     }
 
     public void unsubscribe(ParkingLotSubscriber subscriber) {

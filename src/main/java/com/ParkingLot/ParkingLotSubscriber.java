@@ -1,7 +1,7 @@
 package com.ParkingLot;
 
 public interface ParkingLotSubscriber {
-    public boolean isParkingFull();
+    boolean isParkingFull();
 
     void parkingFull(boolean parkingCapacity);
 }

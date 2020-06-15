@@ -15,6 +15,11 @@ public class InformObserver {
         this.observersList.add(parkingLotSubscriber);
     }
 
+    public void parkingAvailable() {
+        this.parkingCapacity = false;
+        isParkingFull();
+    }
+
     public void unsubscribeParkingLotObserver(ParkingLotSubscriber parkingLotSubscriber) {
         this.observersList.remove(parkingLotSubscriber);
     }
