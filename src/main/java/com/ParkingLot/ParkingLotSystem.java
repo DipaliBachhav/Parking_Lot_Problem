@@ -28,12 +28,12 @@ public class ParkingLotSystem {
         return false;
     }
 
-    public void parkVehicle(Object vehicle, DriverType driverType) {
+    public void parkVehicle(Object vehicle, DriverType driverType, VehicleSize vehicleSize) {
         parkingLot = getParkingLotHavingMaxSpace();
         if (parkingLot.isParkingFull()) {
             throw new ParkingLotSystemException("Parking Is Full", ParkingLotSystemException.ExceptionType.PARKING_FULL);
         }
-        parkingLot.parkVehicle(vehicle, driverType);
+        parkingLot.parkVehicle(vehicle, driverType, vehicleSize);
         if (parkingLot.isParkingFull()) {
             informObserver.parkingFull();
         }

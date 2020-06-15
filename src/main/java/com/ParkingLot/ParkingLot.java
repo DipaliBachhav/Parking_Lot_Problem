@@ -36,7 +36,7 @@ public class ParkingLot {
         return emptyParkingSlotList;
     }
 
-    public void parkVehicle(Object vehicle, DriverType driverType) {
+    public void parkVehicle(Object vehicle, DriverType driverType, VehicleSize vehicleSize) {
         if (isVehicleParked(vehicle)) {
             throw new ParkingLotSystemException("Vehicle Already Parked", ParkingLotSystemException.ExceptionType.VEHICLE_ALREADY_PARKED);
         }
