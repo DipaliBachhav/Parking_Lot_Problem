@@ -52,11 +52,24 @@ public class ParkingLotSystemTest {
     public void givenVehicle_WhenParkingFull_ShouldInformOwner() {
         ParkingOwner parkingOwner = new ParkingOwner();
         try {
-            parkingLotSystem.registerOwner(parkingOwner);
+            parkingLotSystem.registerParkingLotSystemObserver(parkingOwner);
             parkingLotSystem.parkVehicle(new Object());
             parkingLotSystem.parkVehicle(vehicle);
         } catch (ParkingLotSystemException e) {
             Assert.assertTrue(parkingOwner.isParkingFull());
+        }
+    }
+
+    @Test
+    public void givenVehicle_WhenParkingFull_ShouldInformToAirportSecurity() {
+        AirportSecurity airportSecurity = new AirportSecurity();
+        try {
+            parkingLotSystem.registerParkingLotSystemObserver(airportSecurity);
+            parkingLotSystem.parkVehicle(vehicle);
+            parkingLotSystem.parkVehicle(new Object());
+        } catch (ParkingLotSystemException e) {
+            boolean parkingFull = airportSecurity.isParkingFull();
+            Assert.assertTrue(parkingFull);
         }
     }
 
