@@ -396,5 +396,4 @@ public class ParkingLotSystemTest {
             Assert.assertEquals(0, vehicleParkedLocation1);
         }
 
-
     }

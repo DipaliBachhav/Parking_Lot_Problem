@@ -79,6 +79,7 @@ public class ParkingLot {
         }
         return false;
     }
+
     public List<Integer> findByColor(String color) {
         List<Integer> vehicleListByColor = this.vehiclesList.stream()
                 .filter(parkingSlot -> parkingSlot.getVehicle() != null)
@@ -88,4 +89,14 @@ public class ParkingLot {
         return vehicleListByColor;
     }
 
+
+    public List<String> findByColorAndModel(String color, String model) {
+        List<String> vehicleListByColorAndModel = this.vehiclesList.stream()
+                .filter(parkingSlot -> parkingSlot.getVehicle() != null)
+                .filter(parkingSlot -> parkingSlot.getVehicle().getColor().equals(color))
+                .filter(parkingSlot -> parkingSlot.getVehicle().getModel().equals(model))
+                .map(parkingSlot -> parkingSlot.getLocation() + " " + parkingSlot.getVehicle())
+                .collect(Collectors.toList());
+        return vehicleListByColorAndModel;
     }
+}
